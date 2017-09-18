@@ -2,13 +2,14 @@ local class = require '../vendor/middleclass'
 local Player = class('Player')
 local step = 10
 
-function Player:initialize()
+function Player:initialize(color, start)
     self.health = 100
     self.speed = 125
     self.isLoaded = true
     self.direction = "up"
     self.points = {}
-    self.points[1] = {375,550}
+    self.points[1] = {start[1],start[2]}
+    self.color = color
 end
 
 function Player:updatePosition()
@@ -32,8 +33,9 @@ function Player:updatePosition()
 end
 
 function Player:draw()
-
   if #self.points > 1 then
+    love.graphics.setColor(self.color[1], self.color[2], self.color[3], self.color[4])
+    love.graphics.setLineWidth(2)
     for i = 2,#self.points,1 do
       love.graphics.line(
         self.points[i-1][1],

@@ -1,7 +1,9 @@
 debug = true
 
 local utf8 = require 'utf8'
-local server, myPlayer, map, initTime
+local server, myPlayer, initTime
+local width = love.graphics.getWidth()
+local height = love.graphics.getHeight()
 
 function love.load()
     require("vendor/middleclass")
@@ -9,8 +11,10 @@ function love.load()
     --Map = require "classes/Map"
 
     love.graphics.setBackgroundColor(0,0,0)
-    love.graphics.setColor(0,0,255);
-    myPlayer = Player:new()
+    myPlayer = Player:new(
+      {0,0,255,255},
+      {(width/2)-10, height}
+    )
     initTime = love.timer.getTime()
 end
 
@@ -39,7 +43,7 @@ function love.update(dt)
         local currentTime = love.timer.getTime()
         local timeDelta = currentTime - initTime
         currentNumber = timeDelta
-        if timeDelta >= 0.25 then
+        if timeDelta >= 0.15 then
             myPlayer:updatePosition()
             initTime = love.timer.getTime()
         end
@@ -47,6 +51,20 @@ function love.update(dt)
 end
 
 function love.draw()
+  cols = width/10
+  rows = height/10
+
+  love.graphics.setColor(255,255,255, 30);
+  love.graphics.setLineWidth(0.1)
+  for i = 1, cols, 1 do
+    x = i
+    love.graphics.line(x*10,0,x*10, height)
+  end
+  for j = 1, rows, 1 do
+    y = j
+    love.graphics.line(0, y*10,width, y*10)
+  end
+
   if myPlayer then
     myPlayer:draw()
   end
