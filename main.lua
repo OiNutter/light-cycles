@@ -4,6 +4,7 @@ local utf8 = require 'utf8'
 local server, myPlayer, initTime
 local width = love.graphics.getWidth()
 local height = love.graphics.getHeight()
+local mainFont = love.graphics.newFont("assets/flynn.otf", 20)
 
 function love.load()
     require("vendor/middleclass")
@@ -12,6 +13,7 @@ function love.load()
 
     love.graphics.setBackgroundColor(0,0,0)
 
+    love.graphics.setFont(mainFont)
 end
 
 function love.keypressed(key)
