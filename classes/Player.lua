@@ -1,8 +1,23 @@
 local class = require '../vendor/middleclass'
 local Player = class('Player')
 local step = 10
+local controlSets = {
+  {
+    ["left"]   = "a",
+    ["up"]     = "w",
+    ["right"] = "d",
+    ["down"] = "s"
+  },
+  {
+    ["left"]   = "left",
+    ["up"]     = "up",
+    ["right"] = "right",
+    ["down"] = "down"
+  }
+}
 
-function Player:initialize(color, start)
+function Player:initialize(name, color, start, controls)
+    self.name = name
     self.health = 1
     self.speed = 125
     self.isLoaded = true
@@ -10,6 +25,7 @@ function Player:initialize(color, start)
     self.points = {}
     self.points[1] = {start[1],start[2]}
     self.color = color
+    self.controls = controlSets[controls]
 end
 
 function Player:updatePosition()
@@ -54,19 +70,19 @@ end
 
 function Player:checkDirection(map, dt)
 
-    if love.keyboard.isDown('left','a') then
+    if love.keyboard.isDown(self.controls["left"]) and self.direction ~= "right" then
         self.direction = "left"
-    elseif love.keyboard.isDown('right','d') then
+    elseif love.keyboard.isDown(self.controls["right"]) and self.direction ~= "left" then
         self.direction = "right"
-    elseif love.keyboard.isDown('up','w') then
+    elseif love.keyboard.isDown(self.controls["up"]) and self.direction ~= "down" then
         self.direction = "up"
-    elseif love.keyboard.isDown('down','s') then
+    elseif love.keyboard.isDown(self.controls["down"]) and self.direction ~= "up" then
         self.direction = "down"
     end
 
 end
 
-function Player:checkCollision()
+function Player:checkCollision(otherPlayer)
 
   if #self.points > 1 then
 
@@ -77,14 +93,20 @@ function Player:checkCollision()
 
     -- Check for hitting edges
     if x == 0 or x == width or y == 0 or y == height then
-      print ('WALL COLLISION')
       self.health = 0
     else
       -- Check for colliding with myself
       for i = 1,#self.points-1,1 do
         if self.points[i][1] == x and self.points[i][2] == y then
           self.health = 0
-          print ('SELF COLLLISION')
+          break
+        end
+      end
+
+      -- Check for colliding with opponent
+      for i = 1,#otherPlayer.points,1 do
+        if otherPlayer.points[i][1] == x and otherPlayer.points[i][2] == y then
+          self.health = 0
           break
         end
       end
