@@ -1,3 +1,5 @@
+![Tron Light Cycles](https://upload.wikimedia.org/wikipedia/en/2/28/Tron_Lightcycles.jpg)
+
 Light Cycles (WIP)
 ==================
 
