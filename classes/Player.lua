@@ -46,6 +46,9 @@ function Player:draw()
         self.points[i][2]
       )
     end
+
+    self.x = self.points[#self.points][1]
+    self.y = self.points[#self.points][2]
   end
 end
 
@@ -66,10 +69,9 @@ end
 function Player:checkCollision()
 
   if #self.points > 1 then
-    last_point = self.points[#self.points]
 
-    x = last_point[1]
-    y = last_point[2]
+    x = self.x
+    y = self.y
     width = love.graphics.getWidth()
     height = love.graphics.getHeight()
 
@@ -78,8 +80,8 @@ function Player:checkCollision()
       print ('WALL COLLISION')
       self.health = 0
     else
+      -- Check for colliding with myself
       for i = 1,#self.points-1,1 do
-        print(self.points[i][1], self.points[2])
         if self.points[i][1] == x and self.points[i][2] == y then
           self.health = 0
           print ('SELF COLLLISION')
