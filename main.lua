@@ -65,7 +65,8 @@ function love.draw()
     love.graphics.line(0, y*10,width, y*10)
   end
 
-  if myPlayer then
+  if myPlayer and myPlayer:isAlive() then
     myPlayer:draw()
+    myPlayer:checkCollision()
   end
 end
