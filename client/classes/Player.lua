@@ -15,6 +15,7 @@ local controlSets = {
     ["down"] = "down"
   }
 }
+local startPos
 
 function Player:initialize(name, color, start, controls)
     self.name = name
@@ -23,18 +24,24 @@ function Player:initialize(name, color, start, controls)
     self.isLoaded = true
     self.direction = "up"
     self.points = {}
+    startPos = start
     self.points[1] = {start[1],start[2]}
     self.color = color
-    self.controls = controlSets[controls]
+    if controls then self.controls = controlSets[controls] end
+end
+
+function Player:setControls(controls)
+  if controls then self.controls = controlSets[controls] end
 end
 
 function Player:updatePosition()
 
-  if self.health > 0 then
-    last_point = self.points[#self.points]
+  last_point = self.points[#self.points]
 
-    x = last_point[1]
-    y = last_point[2]
+  x = last_point[1]
+  y = last_point[2]
+
+  if self.health > 0 then
 
     if self.direction == "left" then
       x = x - step
@@ -47,7 +54,10 @@ function Player:updatePosition()
     end
 
     self.points[#self.points+1] = {x, y}
+
   end
+
+  return {x=x, y=y}
 end
 
 function Player:draw()
@@ -82,7 +92,7 @@ function Player:checkDirection(map, dt)
 
 end
 
-function Player:checkCollision(otherPlayer)
+function Player:checkCollision(players)
 
   if #self.points > 1 then
 
@@ -94,20 +104,28 @@ function Player:checkCollision(otherPlayer)
     -- Check for hitting edges
     if x == 0 or x == width or y == 0 or y == height then
       self.health = 0
+      print ('WALL')
     else
       -- Check for colliding with myself
       for i = 1,#self.points-1,1 do
+        print(self.points[i])
         if self.points[i][1] == x and self.points[i][2] == y then
           self.health = 0
+          print('SELF')
           break
         end
       end
 
-      -- Check for colliding with opponent
-      for i = 1,#otherPlayer.points,1 do
-        if otherPlayer.points[i][1] == x and otherPlayer.points[i][2] == y then
-          self.health = 0
-          break
+      -- Check for colliding with opponents
+      for k,v in pairs(players) do
+        if k ~= self.name then
+          for i = 1,#v.points,1 do
+            if v.points[i][1] == x and v.points[i][2] == y then
+              self.health = 0
+              print('OPPONENT')
+              break
+            end
+          end
         end
       end
     end
@@ -116,6 +134,23 @@ end
 
 function Player:isAlive()
   return self.health > 0
+end
+
+function Player:addPoint(point)
+  last_point = self.points[#self.points]
+  if point[1] ~= last_point[1] or point[2] ~= last_point[2] then
+    self.points[#self.points+1] = point
+  end
+end
+
+function Player:reset()
+  self.direction = "up"
+  self.points = {}
+  self.health = 1
+  self.points[1] = {startPos[1],startPos[2]}
+  self.x = nil
+  self.y = nil
+  return {x=startPos[1], y=startPos[2]}
 end
 
 return Player
